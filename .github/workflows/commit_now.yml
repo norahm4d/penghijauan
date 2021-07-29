@@ -1,4 +1,4 @@
-name: Commit cheat
+name: Commit Now
 
 on:
   workflow_dispatch:
@@ -11,11 +11,17 @@ on:
         description: 'Username'
         required: true
         default: 'binsarjr'
+      commit:
+        description: 'Commit'
+        required: true
+        default: 'Penghijauan'
+      limit:
+        description: 'Limit Commit'
+        required: true
+        default: 10
   push:
     branches:
       - main
-  schedule:
-  - cron: "0 */1 * * *"
 
 jobs:
   auto_commit:
@@ -25,19 +31,22 @@ jobs:
         with:
          persist-credentials: false
          fetch-depth: 0
-
-      - name: Modify last update
-        run: |
-          cat > LAST_UPDATED
-          d=`date '+%Y-%m-%dT%H:%M:%SZ'`
-          echo $d > LAST_UPDATED
-
-      - name: Commit changes
-        run: |
+      
+      - name: Set Config
+        run: /
           git config --local user.email "${{ github.event.inputs.email }}"
           git config --local user.name "${{ github.event.inputs.username }}"
-          git add -A
-          git commit -m "Penghijauan"
+
+      - name: DO It
+        run: |
+          for i in {0..${{ github.event.inputs.limit }}}
+          do
+            cat > LAST_UPDATED
+            d=$i+`date '+%Y-%m-%dT%H:%M:%SZ'`
+            echo $d > LAST_UPDATED
+            git add -A
+            git commit -m "${{ github.event.inputs.commit }}"
+          done
           
       - name: GitHub Push
         uses: ad-m/github-push-action@v0.5.0
