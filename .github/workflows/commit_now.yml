@@ -33,7 +33,7 @@ jobs:
          fetch-depth: 0
       
       - name: Set Config
-        run: /
+        run: |
           git config --local user.email "${{ github.event.inputs.email }}"
           git config --local user.name "${{ github.event.inputs.username }}"
 
